@@ -17,7 +17,14 @@ spec:
       - name: unicorn-front
         image: registry.master3.takima.io/guide/kubernetes-resources/hello_world:latest
         ports:
-        - containerPort: 3000
+        - name: liveness-port
+          containerPort: 3000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: liveness-port
+          failureThreshold: 1
+          periodSeconds: 10
         env:
         - name: K8S_NODE_NAME
           valueFrom:
@@ -35,7 +42,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: hello-secret
-              key: color     
+              key: color
     metadata:
       labels:
         app: unicorn-front
