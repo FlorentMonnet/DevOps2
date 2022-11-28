@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unicorn-front-deployment
+  labels:
+    app: unicorn-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hpa
+  template:
+    spec:
+      imagePullSecrets:
+      - name: auth-master3-registry
+      containers:
+      - name: hpa
+        image: registry.master3.takima.io/guide/kubernetes-resources/hpa:latest
+        ports:  
+        - containerPort: 3000
+
