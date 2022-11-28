@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: unicorn-front-replicaset
+  labels:
+    app: unicorn-front
+spec:
+  template:
+    metadata:
+      name: unicorn-front-pod
+      labels:
+        app: unicorn-front
+    spec:
+      containers:
+      - name: unicorn-front
+        image: public.ecr.aws/l3x6e3t5/takima-training/nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      app: unicorn-front
+

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unicorn-front-deployment
+  labels:
+    app: unicorn-front
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: unicorn-front
+  template:
+    metadata:
+      labels:
+        app: unicorn-front
+    spec:
+      containers:
+      - name: unicorn-front
+        image: public.ecr.aws/l3x6e3t5/takima-training/nginx:1.9.1
+        ports:
+        - containerPort: 80
+

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: unicorn-front-service
+spec:
+  selector:
+    app: unicorn-front
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+

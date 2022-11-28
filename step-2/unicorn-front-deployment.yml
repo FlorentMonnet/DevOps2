@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unicorn-front-deployment
+  labels:
+    app: unicorn-front
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: unicorn-front
+  template:
+    metadata:
+      spec:
+        imagePullSecrets:
+        - name: auth-master3-registry
+      labels:
+        app: unicorn-front
+    spec:
+      containers:
+      - name: unicorn-front
+        image: registry.master3.takima.io/guide/kubernetes-resources/hello_world:latest
+        ports:
+        - containerPort: 80
+

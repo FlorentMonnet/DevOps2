@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unicorn-front-deployment
+  labels:
+    app: unicorn-front
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: unicorn-front
+  template:
+    spec:
+      imagePullSecrets:
+      - name: auth-master3-registry
+      containers:
+      - name: unicorn-front
+        image: registry.master3.takima.io/guide/kubernetes-resources/hello_world:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: K8S_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: K8S_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: K8S_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+    metadata:
+      labels:
+        app: unicorn-front
+      
+
