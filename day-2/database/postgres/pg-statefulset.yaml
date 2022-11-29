@@ -1,14 +1,15 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: pg-deployment
+  name: pg-statefulset
   labels:
     app: database
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: database
+  serviceName: "database"
   template:
     metadata:
       labels:
@@ -16,11 +17,6 @@ spec:
     spec:
       imagePullSecrets:
         - name: auth-master3-registry
-      volumes:
-        - name: pg-data
-          persistentVolumeClaim:
-            claimName: pg-db
-
       containers:
         - name: database
           image: registry.master3.takima.io/guide/kubernetes-resources/db:latest
@@ -50,3 +46,12 @@ spec:
                 configMapKeyRef:
                   name: pg-config # Nom du configmap
                   key: DB_PATH # nom de la clef dans le configMap contenant path ou installer la db dans le volume persistant
+  volumeClaimTemplates:
+  - metadata:
+      name: pg-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
