@@ -1,15 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: unicorn-front-deployment
+  name: hpa
   labels:
-    app: unicorn-front
+    app: hpa
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: hpa
   template:
+    metadata:
+          labels:
+            app: hpa
     spec:
       imagePullSecrets:
       - name: auth-master3-registry
@@ -18,4 +21,10 @@ spec:
         image: registry.master3.takima.io/guide/kubernetes-resources/hpa:latest
         ports:  
         - containerPort: 3000
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+
 
