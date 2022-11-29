@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-deployment
+  labels:
+    app: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      imagePullSecrets:
+      - name: auth-master3-registry
+      containers:
+      - name: front
+        image: registry.master3.takima.io/guide/kubernetes-resources/front:latest
+        ports:
+        - containerPort: 80
+        env:
+          - name: API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: front-config
+                key: API_URL
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: pg-config
+                key: POSTGRES_DB
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pg-credentials
+                key: password
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: pg-credentials
+                key: username

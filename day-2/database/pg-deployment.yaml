@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-deployment
+  labels:
+    app: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      imagePullSecrets:
+        - name: auth-master3-registry
+      volumes:
+        - name: pg-data
+          persistentVolumeClaim:
+            claimName: pg-db
+
+      containers:
+        - name: database
+          image: registry.master3.takima.io/guide/kubernetes-resources/db:latest
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: pg-data
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: pg-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-credentials
+                  key: password
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-credentials
+                  key: username
+            - name: PGDATA
+              valueFrom:
+                configMapKeyRef:
+                  name: pg-config # Nom du configmap
+                  key: DB_PATH # nom de la clef dans le configMap contenant path ou installer la db dans le volume persistant

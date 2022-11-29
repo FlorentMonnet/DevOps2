@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+          labels:
+            app: api
+    spec:
+      imagePullSecrets:
+      - name: auth-master3-registry
+      containers:
+      - name: api
+        image: registry.master3.takima.io/guide/kubernetes-resources/api:latest
+        ports:
+        - containerPort: 8080
+        env:
+          - name: DB_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: api-config
+                key: DB_ENDPOINT
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: api-config
+                key: POSTGRES_DB
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pg-credentials
+                key: password
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: pg-credentials
+                key: username
