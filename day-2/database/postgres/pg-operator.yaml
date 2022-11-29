@@ -1,0 +1,19 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: database-cdb
+spec:
+  teamId: "database"  # le team id doit matcher le préfixe dans le metadata.name, ici formation
+  volume:
+    size: 1Gi
+  numberOfInstances: 2
+  users:
+    cdb:  # database owner
+      - superuser
+      - createdb
+  databases:
+    cdb: cdb  # dbname: owner
+  postgresql:
+    version: "14"
+  enableLogicalBackup: true
+  logicalBackupSchedule: 30 00 * * *
