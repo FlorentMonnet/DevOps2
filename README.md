@@ -203,5 +203,35 @@ Ma persistence de données n'est pas encore présent dans notre base postgres. L
 
 **D’après le tableau, quel est le type d’accès implémenté par notre Storage Class EBS ? Pourquoi cela convient parfaitement pour la persistance de la base de données Postgres ?**
 
-Nous on a mit en place le `ReadWriteOnce` car nous avons 1 seul replicas du pod postgres.
+Nous on a mit en place le `ReadWriteOnce` pour éviter que deux utilisateurs écrivent ou lisent dans la base en même temps.
 
+# Day 3 : GitOps
+
+**Que constatez-vous ?**
+```shell
+GET _cat/health?v
+```
+`epoch timestamp cluster status node.total node.data shards pri relo init unassign pending_tasks max_task_wait_time active_shards_percent
+1669796683 08:24:43 elasticsearch green 3 3 22 11 0 0 0 0 - 100.0%`
+
+On voit qu'il y a un seul pod qui tourne à 100%.
+
+```shell
+GET _cat/allocation?v
+```
+
+`shards disk.indices disk.used disk.avail disk.total disk.percent host ip node
+ 7 3.4mb 20.9mb 952.4mb 973.4mb 2 10.0.7.29 10.0.7.29 elasticsearch-es-default-2
+ 7 49.6mb 67.1mb 906.2mb 973.4mb 6 10.0.5.147 10.0.5.147 elasticsearch-es-default-1
+ 8 51.1mb 68.7mb 904.6mb 973.4mb 7 10.0.2.61 10.0.2.61 elasticsearch-es-default-0`
+
+**Pour vérifier que tout fonctionne, essayez de détruire un deployment manuellement dans votre Cluster. Que se passe-t-il ?**
+
+Le déploiement est récréé.
+
+**Essayez de modifier le values.yaml en augmentant le replicaCount par exemple. Que se passe-t-il ?**
+
+Il faut push sur le git et ça met à jour sur ArgoCD
+        image: public.ecr.aws/l3x6e3t5/takima-training/nginx:1.9.1
+        ports:
+        - containerPort: 80
